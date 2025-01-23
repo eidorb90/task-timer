@@ -1,3 +1,13 @@
+"""
+__main__.py
+Brodie Rogers <brodie.rogers@students.cune.edu>
+2025-01-22
+
+A Python-based task timer application to help you manage and track time for multiple tasks efficiently. 
+This program provides functionality to create, toggle, and display timers for tasks in real-time, making it an excellent tool for productivity and time management.
+"""
+
+
 import time
 import os
 import select
