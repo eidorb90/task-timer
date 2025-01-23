@@ -138,10 +138,11 @@ def non_blocking_input():
     Returns:
         str or None: The user input as a string, or None if no input was detected.
     """
-    i, o, e = select.select([sys.stdin], [], [], 0.1)
+    i, o, e = select.select([sys.stdin], [], [], 1)
     if i:
         return sys.stdin.readline().strip()
     else:
+        
         return None
 
 def show_options():
@@ -205,7 +206,7 @@ def display(task_list, task_name_list):
     Allows the user to exit the display loop by pressing 'c'.
     """
     display_tasks = True
-    task_to_display = input("Tasks to display?: ").lower()
+    task_to_display = input("Tasks to display?('all' or 'task-name'): ").lower()
 
     if task_to_display == "all":
         """
@@ -217,7 +218,7 @@ def display(task_list, task_name_list):
         print("")
         while display_tasks:
             clear_console()
-            print("Enter 'c' to exit display (hint: you have to hit enter right away)")
+            print("Enter 'c' to exit display:")
             print("Task Name | Task Status | Task Time")
             for task in task_list:
                 print(task)
