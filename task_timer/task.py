@@ -52,7 +52,7 @@ class Task():
         self.task_len = 0
         self.start_time = None
         self.end_time = None
-        self.current_time = None
+        self.current_time = 0
         self.status = "Off"
         self.pre_paused_time = 0
 
