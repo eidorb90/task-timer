@@ -4,9 +4,17 @@ version = "0.1.0"
 description = "Task Timer CLI"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "click>=8.1.8",
+]
 [project.scripts]
-task-timer = "task_timer:main"
+task-timer = "task_timer.__main__:main"
  
 [tool.uv]
-package = true
+package = true  
+
+[dependency-groups]
+dev = [
+    "click>=8.1.8",
+]
+
