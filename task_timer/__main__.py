@@ -10,6 +10,10 @@ import click
 import csv
 from task_timer.task import Task
 import os
+import time
+import select
+import sys
+import colorama
 
 TASK_FILE = "tasks.csv"
 
@@ -47,6 +51,29 @@ def save_tasks(task_list):
     except Exception as e:
         click.echo(f"Failed to save tasks: {e}")
 
+def clear_console():
+    """
+    Clears the terminal screen, depending on the operating system.
+    
+    This function works by executing the appropriate command to clear the console:
+    'cls' for Windows and 'clear' for Unix-based systems (e.g., Linux, macOS).
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def non_blocking_input():
+    """
+    Checks for non-blocking user input by using the select method, which allows
+    the program to continue running while waiting for user input.
+    
+    Returns:
+        str or None: The user input as a string, or None if no input was detected.
+    """
+    i, o, e = select.select([sys.stdin], [], [], 1)
+    if i:
+        return sys.stdin.readline().strip()
+    else:
+        
+        return None
 
 @click.group()
 def main():
@@ -63,10 +90,12 @@ def list():
 
     click.echo("")
     click
-    click.echo("Task Name | Task Status | Task Time")
+    print("Task Name      | Task Status  | Task Time")
+    print("-----------------------------------------")
     for task in task_list:
         click.echo(task)
-
+    print("-----------------------------------------")
+    
 @main.command()
 @click.option("--name", type=str, help="Create New Tasks.")
 def create(name):
@@ -99,6 +128,66 @@ def toggle(name):
     save_tasks(task_list)
 
 @main.command()
+@click.option("--name", type=click.Choice([task.task_name for task in load_tasks()], case_sensitive=False), help="Real time display of the selected timer(s)")
+def display(name):
+    """
+    Displays the status and run time of tasks in real-time.
+    Provides the option to view all tasks or a specific task.
+    Allows the user to exit the display loop by pressing 'c'.
+    """
+    task_list = load_tasks()
+    display_tasks = True
+
+    if name == None:
+        """
+        Displays all tasks in real-time, updating every second.
+        """
+        if len(task_list) == 0:
+            print("No current tasks. Use the 'Create' command to create tasks.")
+
+        print("")
+        while display_tasks:
+            clear_console()
+            print("Enter 'c' to exit display:")
+            print("Task Name      | Task Status  | Task Time")
+            print("-----------------------------------------")
+
+            for task in task_list:
+                print(task)
+            print("-----------------------------------------")
+            
+            user_input = non_blocking_input()
+            try:
+                if user_input.lower() == "c":
+                    display_tasks = False
+            except: 
+                continue
+            time.sleep(1)
+
+    elif name in (task.task_name for task in task_list):
+        """
+        Displays a specific task in real-time, updating every second.
+        """
+        print("")
+        while display_tasks:
+            clear_console()
+            print("Enter 'c' to exit display (hint: you have to hit enter right away)")
+            print("Task Name | Task Status | Task Time")
+            for task in task_list:
+                if task.task_name == name:
+                    print(task)
+            user_input = non_blocking_input()
+            try:
+                if user_input.lower() == "c":
+                    display_tasks = False
+            except: 
+                continue
+            time.sleep(1)
+
+    else:
+        print(f"{name}: NOT A VALID TASK!!!")
+
+@main.command()
 @click.option("--name", type=click.Choice([task.task_name for task in load_tasks()], case_sensitive=False), required=True, help="Delete a given task")
 def delete(name):
     """Deletes the given task from the CSV file."""
@@ -115,9 +204,8 @@ def delete(name):
     task_list.remove(task_to_remove)
     save_tasks(task_list)
 
-    click.echo(f"Successfully removed task '{name}'!")
+    click.echo(f"Successfully removed task '{name}'!") 
     
-
 @main.command()
 @click.option('--filename', default='tasks.csv', help="The name of the CSV file to save task data to.")
 def save(filename):

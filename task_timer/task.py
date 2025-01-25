@@ -118,11 +118,11 @@ class Task():
 
         if self.end_time is not None:
             timer_time = self.calc_time(self.start_time, self.end_time)
-            return f"{self.task_name} | {self.status} | {timer_time}"
+            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {timer_time}"
         
         elif self.start_time is not None:
             timer_time = self.calc_time(self.start_time, self.current_time)
-            return f"{self.task_name} | {self.status} | {timer_time}"
-    
+            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {timer_time}"
+          
         else:
-            return f"{self.task_name} | {self.status} | {0}"
+            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {0}"

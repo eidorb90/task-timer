@@ -6,6 +6,5 @@ Brodie Rogers <brodie.rogers@students.cune.edu>
 Imports main
 """
 from task_timer.__main__ import main
-# from task_timer.task import Task
 
 __all__ = ["main"]
