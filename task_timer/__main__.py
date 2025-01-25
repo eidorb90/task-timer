@@ -258,6 +258,53 @@ def load(filename):
     except Exception as e:
         click.echo(f"Faild to load tasks. {e}")
 
+@main.command()
+@click.option("--timer", type=click.Choice([task.task_name for task in load_tasks()]), required=True, help="Reset a given timer.")
+def reset(timer):
+    """
+    Resets the given timer.
+    """
+    task_list = load_tasks()
+    task_names = [task.task_name for task in task_list]
+    if timer not in task_names:
+        click.echo(f"{timer} Couldn't reset.")
+        return 
+    
+    for task in task_list:
+        if task.task_name == timer:
+            task.start_time = None
+            task.end_time = None
+            task.current_time = 0
+            task.pre_paused_time = 0
+
+    save_tasks(task_list)
+    click.echo(f"{timer} Successfully reset.")
+
+
+
+# @main.command()
+# @click.option("--timer", type=click.Choice([task.task_name for task in load_tasks()]), required=True, help="Allows the user to edit a timer")
+# def edit(timer):
+#     """
+#     Edits the given timer.
+#     """
+
+#     task_list = load_tasks()
+
+#     task_names = [task.task_name for task in task_list]
+#     if timer not in task_names:
+#         click.echo(f"{timer} Couldn't Edit.")
+#         return 
+    
+#     for task in task_list:
+#         if task.task_name == timer:
+#             pass
+
+#     save_tasks(task_list)
+#     click.echo(f"{timer} Successfully Edited")
+
+
+
 
 
 
