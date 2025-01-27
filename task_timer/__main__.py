@@ -280,7 +280,7 @@ def reset(timer):
 
     save_tasks(task_list)
     click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} Successfully reset.{Fore.RESET}")
-x``
+
 
 
 
