@@ -9,13 +9,13 @@ A Python-based task timer application to help you efficiently manage and track t
 1. **List**  
    Lists all active tasks with their name, status, and elapsed time.
    ```bash
-   python __main__.py list
+   task-timer list
    ```
 
 2. **Create**  
    Creates a new task. You can specify a name or let the program assign one.
    ```bash
-   python __main__.py create --name <task_name>
+   task-timer create --name <task_name>
    ```
 
 3. **Toggle**  
@@ -24,7 +24,7 @@ A Python-based task timer application to help you efficiently manage and track t
    - **Paused → Active**: Resumes the task.
    - **Active → Paused**: Pauses the task.
    ```bash
-   python __main__.py toggle --name <task_name>
+   task-timer toggle --name <task_name>
    ```
 
 4. **Display**  
@@ -32,31 +32,31 @@ A Python-based task timer application to help you efficiently manage and track t
    - **All tasks**
    - **A specific task**  
    ```bash
-   python __main__.py display --name <task_name>
+   task-timer display --name <task_name>
    ```
 
 5. **Delete**  
    Deletes a specific task.
    ```bash
-   python __main__.py delete --name <task_name>
+   task-timer delete --name <task_name>
    ```
 
 6. **Save**  
    Saves the current tasks to a specified CSV file (default: `tasks.csv`).
    ```bash
-   python __main__.py save --filename <file_name>
+   task-timer save --filename <file_name>
    ```
 
 7. **Load**  
    Loads tasks from a specified CSV file (default: `tasks.csv`).
    ```bash
-   python __main__.py load --filename <file_name>
+   task-timer load --filename <file_name>
    ```
 
 8. **Reset**  
    Resets the timer for a specific task to `0`.
    ```bash
-   python __main__.py reset --timer <task_name>
+   task-timer reset --timer <task_name>
    ```
 
 ---
