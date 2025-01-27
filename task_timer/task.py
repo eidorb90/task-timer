@@ -8,6 +8,7 @@ and their indicidual processes.
 """
 
 import time
+from colorama import Fore
 
 class Task():
     """
@@ -63,7 +64,7 @@ class Task():
         """
         self.start_time = time.time()
         self.status = "Active"
-        print(f"{self.task_name}: Started Successfully")
+        print(f"{Fore.MAGENTA}{self.task_name}{Fore.RESET}: {Fore.GREEN}Started Successfully{Fore.RESET}")
     
     def pause(self):
         """
@@ -74,7 +75,7 @@ class Task():
         self.end_time = time.time()
         self.pre_paused_time += self.end_time - (self.start_time + self.pre_paused_time)
         self.status = "Paused"
-        print(f"{self.task_name}: Paused Successfully")
+        print(f"{Fore.MAGENTA}{self.task_name}{Fore.RESET}: {Fore.GREEN}Successfully Paused{Fore.RESET}")
 
     def resume(self):
         """
@@ -84,7 +85,7 @@ class Task():
         self.end_time = None
         self.start_time = time.time() - self.pre_paused_time
         self.status = "Active"
-        print(f"{self.task_name}: Resumed Successfully")
+        print(f"{Fore.MAGENTA}{self.task_name}{Fore.RESET}: {Fore.GREEN}Resumed Successfully{Fore.RESET}")
 
     def calc_time(self, start, end):
         """
@@ -116,13 +117,20 @@ class Task():
         """
         self.current_time = time.time()
 
+        if self.status == "Off":
+            status_str = f"{Fore.RED}{self.status}{Fore.RESET}"
+        elif self.status == "Paused":
+            status_str = f"{Fore.MAGENTA}{self.status}{Fore.RESET}"
+        elif self.status == "Active":
+            status_str = f"{Fore.GREEN}{self.status}{Fore.RESET}"
+
         if self.end_time is not None:
             timer_time = self.calc_time(self.start_time, self.end_time)
-            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {timer_time}"
+            return f"{Fore.BLUE}{self.task_name}{Fore.RESET}{" " * (15 - len(self.task_name))}| {status_str}{" " * (12 - len(self.status))} | {timer_time}"
         
         elif self.start_time is not None:
             timer_time = self.calc_time(self.start_time, self.current_time)
-            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {timer_time}"
+            return f"{Fore.BLUE}{self.task_name}{Fore.RESET}{" " * (15 - len(self.task_name))}| {status_str}{" " * (12 - len(self.status))} | {timer_time}"
           
         else:
-            return f"{self.task_name}{" " * (15 - len(self.task_name))}| {self.status}{" " * (12 - len(self.status))} | {0}"
+            return f"{Fore.BLUE}{self.task_name}{Fore.RESET}{" " * (15 - len(self.task_name))}| {status_str}{" " * (12 - len(self.status))} | {0}"

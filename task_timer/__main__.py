@@ -13,7 +13,7 @@ import os
 import time
 import select
 import sys
-import colorama
+from colorama import Fore
 
 TASK_FILE = "tasks.csv"
 
@@ -85,7 +85,7 @@ def list():
     """Lists all the current tasks with their names, statuses, and run times."""
     task_list = load_tasks()
     if len(task_list) == 0:
-        click.echo("No current tasks. Use the 'create' command to add tasks.")
+        click.echo(f"No current tasks. Use the {Fore.MAGENTA}'create'{Fore.RESET} command to add tasks.")
         return
 
     click.echo("")
@@ -107,6 +107,7 @@ def create(name):
 
     task_list.append(new_task)
     save_tasks(task_list)
+    click.echo(f"{Fore.MAGENTA}{name}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.GREEN} Successfully Created{Fore.RESET}")
 
 @main.command()
 @click.option("--name", type=click.Choice([task.task_name for task in load_tasks()], case_sensitive=False), required=True, help="Toggle selected timer on or off.")
@@ -123,7 +124,7 @@ def toggle(name):
                 elif task.status == "Active" and task.start_time is not None:
                     task.pause()
     except Exception as e:
-        click.echo(f"Faild to toggle task. {e}")
+        click.echo(f"{Fore.RED}Faild to toggle task. {e}{Fore.RESET}")
 
     save_tasks(task_list)
 
@@ -143,12 +144,12 @@ def display(name):
         Displays all tasks in real-time, updating every second.
         """
         if len(task_list) == 0:
-            print("No current tasks. Use the 'Create' command to create tasks.")
+            print(f"No current tasks. Use the {Fore.MAGENTA}'Create'{Fore.RESET} command to create tasks.")
 
         print("")
         while display_tasks:
             clear_console()
-            print("Enter 'c' to exit display:")
+            print(f"Enter {Fore.BLUE}'c'{Fore.RESET} to exit display:")
             print("Task Name      | Task Status  | Task Time")
             print("-----------------------------------------")
 
@@ -185,7 +186,7 @@ def display(name):
             time.sleep(1)
 
     else:
-        print(f"{name}: NOT A VALID TASK!!!")
+        print(f"{Fore.MAGENTA}{name}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} NOT A VALID TASK!!!{Fore.RESET}")
 
 @main.command()
 @click.option("--name", type=click.Choice([task.task_name for task in load_tasks()], case_sensitive=False), required=True, help="Delete a given task")
@@ -197,14 +198,14 @@ def delete(name):
     task_to_remove = next((task for task in task_list if task.task_name == name), None)
 
     if not task_to_remove:
-        click.echo(f"Task '{name}' not found.")
+        click.echo(f"{Fore.RED}Task {Fore.RESET}{Fore.MAGENTA}'{name}'{Fore.RESET}{Fore.RED} not found.{Fore.RESET}")
         return
 
     # Remove the task and save the updated list
     task_list.remove(task_to_remove)
     save_tasks(task_list)
 
-    click.echo(f"Successfully removed task '{name}'!") 
+    click.echo(f"{Fore.GREEN}Successfully removed task{Fore.RESET} {Fore.MAGENTA}'{name}'{Fore.RESET}{Fore.GREEN}!{Fore.RESET}") 
     
 @main.command()
 @click.option('--filename', default='tasks.csv', help="The name of the CSV file to save task data to.")
@@ -212,7 +213,7 @@ def save(filename):
     """Saves the current tasks to csv file."""
     task_list = load_tasks()
     if len(task_list) == 0:
-        click.echo("No tasks to save.")
+        click.echo(f"{Fore.RED}No tasks to save.{Fore.RESET}")
     
     else:
         try:
@@ -224,7 +225,7 @@ def save(filename):
                 for task in task_list:
                     writer.writerow([task.task_name, task.status, task.current_time, task.start_time, task.end_time, task.pre_paused_time])
         except Exception as e:
-            click.echo(f"Faild to save tasks. {e}")
+            click.echo(f"{Fore.RED}Faild to save tasks. {e}{Fore.RESET}")
 
 @main.command()
 @click.option("--filename", default='tasks.csv', help="Loads task data from a csv file.")
@@ -251,23 +252,23 @@ def load(filename):
 
             save_tasks(task_list)
             
-            click.echo(f"{len(task_list)} Tasks loaded from CSV")
+            click.echo(f"{Fore.MAGENTA}{len(task_list)}{Fore.RESET} {Fore.GREEN}Tasks loaded from CSV{Fore.RESET}")
             for task in task_list:
                 print(task)
 
     except Exception as e:
-        click.echo(f"Faild to load tasks. {e}")
+        click.echo(f"{Fore.RED}Faild to load tasks. {e}{Fore.RESET}")
 
 @main.command()
 @click.option("--timer", type=click.Choice([task.task_name for task in load_tasks()]), required=True, help="Reset a given timer.")
-def reset(timer):
+def reset(timer):   
     """
     Resets the given timer.
     """
     task_list = load_tasks()
     task_names = [task.task_name for task in task_list]
     if timer not in task_names:
-        click.echo(f"{timer} Couldn't reset.")
+        click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.RED} Couldn't reset.{Fore.RESET}")
         return 
     
     for task in task_list:
@@ -278,32 +279,8 @@ def reset(timer):
             task.pre_paused_time = 0
 
     save_tasks(task_list)
-    click.echo(f"{timer} Successfully reset.")
-
-
-
-# @main.command()
-# @click.option("--timer", type=click.Choice([task.task_name for task in load_tasks()]), required=True, help="Allows the user to edit a timer")
-# def edit(timer):
-#     """
-#     Edits the given timer.
-#     """
-
-#     task_list = load_tasks()
-
-#     task_names = [task.task_name for task in task_list]
-#     if timer not in task_names:
-#         click.echo(f"{timer} Couldn't Edit.")
-#         return 
-    
-#     for task in task_list:
-#         if task.task_name == timer:
-#             pass
-
-#     save_tasks(task_list)
-#     click.echo(f"{timer} Successfully Edited")
-
-
+    click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} Successfully reset.{Fore.RESET}")
+x``
 
 
 
