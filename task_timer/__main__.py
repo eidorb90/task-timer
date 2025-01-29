@@ -102,6 +102,10 @@ def create(name):
     """Create a new task."""
 
     task_list = load_tasks()
+    task_name_list = [task.task_name for task in task_list]
+    if name in task_name_list:
+        return click.echo(f"{Fore.MAGENTA}{name}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} Couldn't be Created due to the name being in use!{Fore.RESET}")
+
     task_name = name if name else f"task{len(task_list) + 1}"
     new_task = Task(task_name)
 
@@ -172,11 +176,13 @@ def display(name):
         print("")
         while display_tasks:
             clear_console()
-            print("Enter 'c' to exit display (hint: you have to hit enter right away)")
-            print("Task Name | Task Status | Task Time")
+            print(f"Enter {Fore.BLUE}'c'{Fore.RESET} to exit display:")
+            print("Task Name      | Task Status  | Task Time")
+            print("-----------------------------------------")
             for task in task_list:
                 if task.task_name == name:
                     print(task)
+                    print("-----------------------------------------")
             user_input = non_blocking_input()
             try:
                 if user_input.lower() == "c":
@@ -268,7 +274,7 @@ def reset(timer):
     task_list = load_tasks()
     task_names = [task.task_name for task in task_list]
     if timer not in task_names:
-        click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.RED} Couldn't reset.{Fore.RESET}")
+        click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.RED}{Fore.WHITE}:{Fore.RESET} Couldn't reset.{Fore.RESET}")
         return 
     
     for task in task_list:
@@ -279,10 +285,56 @@ def reset(timer):
             task.pre_paused_time = 0
 
     save_tasks(task_list)
-    click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} Successfully reset.{Fore.RESET}")
+    click.echo(f"{Fore.MAGENTA}{timer}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.GREEN} Successfully reset.{Fore.RESET}")
 
+@main.command()
+@click.option("--timer", type=click.Choice([task.task_name for task in load_tasks()]), required=True, help="The name of the timer to edit.")
+@click.option("-n", type=str, help="Use this when wanting to change name.")
+@click.option("-t", type=int, help="Seconds to add use '-' value to subtract seconds. Must be toggled off!")
+def edit(timer, n, t):
+    """
+    Edits different aspects for the given timer
+    """
+    task_list = load_tasks()
+    task_name_list = [task.task_name for task in task_list]
+    if n:
+        for task in task_list:
+            if task.task_name == timer:
+                if n in task_name_list:
+                    return click.echo(f"{Fore.MAGENTA}{n}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.RED} Couldn't be Created due to the name being in use!{Fore.RESET}")
+                old_name = task.task_name
+                task.task_name = n
+                click.echo(f"{Fore.MAGENTA}{task.task_name}{Fore.RESET}{Fore.WHITE}:{Fore.RESET}{Fore.GREEN} Successfully changed from {Fore.RESET}'{Fore.MAGENTA}{old_name}{Fore.RESET}'{Fore.RESET}")
 
-
+    if t:
+        for task in task_list:
+            if task.task_name == timer:
+                if task.start_time is not None and task.status != "Active":
+                    task.current_time = time.time()
+                    
+                    if task.end_time:
+                        elapsed = task.end_time - task.start_time
+                    else:
+                        elapsed = task.current_time - task.start_time
+                    
+                    if t > 0:
+                        elapsed += t
+                        task.start_time = task.end_time - elapsed
+                    else:
+                        new_elapsed = max(0, elapsed + t)
+                        task.start_time = task.end_time - new_elapsed
+                        
+                        if new_elapsed == 0:
+                            click.echo(f"{Fore.MAGENTA}{task.task_name}{Fore.RESET}:{Fore.RESET}{Fore.GREEN} Timer set to {Fore.MAGENTA}0{Fore.RED} seconds.{Fore.RESET}")
+                            continue
+                        
+                    if t >= 0:
+                        click.echo(f"{Fore.MAGENTA}{task.task_name}{Fore.RESET}:{Fore.RESET}{Fore.GREEN} Successfully added {Fore.RESET}{Fore.MAGENTA}{t}{Fore.RESET} seconds.{Fore.RESET}")
+                    else:
+                        click.echo(f"{Fore.MAGENTA}{task.task_name}{Fore.RESET}:{Fore.RESET}{Fore.GREEN} Successfully subtracted {Fore.RESET}{Fore.MAGENTA}{t*-1}{Fore.RESET} seconds.{Fore.RESET}")
+                else:
+                    click.echo(f"{Fore.MAGENTA}{task.task_name}{Fore.RESET}:{Fore.RESET}{Fore.RED} time can't be edited {Fore.RESET}")
+        save_tasks(task_list)
 
 
 if __name__ == "__main__":
