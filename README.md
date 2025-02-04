@@ -56,9 +56,59 @@ A Python-based task timer application to help you efficiently manage and track t
 8. **Reset**  
    Resets the timer for a specific task to `0`.
    ```bash
-   task-timer reset --timer <task_name>
+   task-timer reset --name <task_name>
    ```
 
+9. **Edit**  
+   Edits a timers name or length.
+
+   Remove 50 Seconds
+   ```bash
+   task-timer reset --name <task_name> -t -50
+   ```
+   or 
+
+   Change the name to task1
+   ```bash
+   task-timer reset --name <task_name> -n task1
+   ```
+---
+
+## Installation
+
+### Prerequisites
+- Python 3.7 or higher
+- pip (Python package installer)
+
+### Setup Virtual Environment (Recommended)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/eidorb90/task-timer.git
+   cd task-timer
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   # Windows
+   python -m venv .venv
+   .venv\Scripts\activate
+
+   # macOS/Linux
+   python -m venv .venv
+   source .venv/bin/activate
+   ```
+   
+3.   Quick Start
+
+   After installation, you can run the task timer using:
+
+   ```bash
+   python __main__.py
+   ```
+
+### Troubleshooting
+- If you encounter permission errors during installation, try using `sudo` on Linux/macOS or run the command prompt as administrator on Windows.
+- If the `click` or `colorama` modules are not found, ensure you're running the commands from within the activated virtual environment.
 ---
 
 ## CSV File Structure
